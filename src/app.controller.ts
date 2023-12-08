@@ -1,17 +1,23 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, ParseArrayPipe, Query } from '@nestjs/common';
 import { AppService } from './app.service';
-import { QuestionsRepository } from './infrastructure/repositories/questions.repository';
+import { QuestionDto } from './question.dto';
+import { QuestionService } from './question.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private questionRepository: QuestionsRepository,
+    private questionService: QuestionService,
   ) {}
 
   @Get()
-  async getHello() {
-    await this.questionRepository.getNextQuestion();
-    return this.appService.getHello();
+  async getAvailableServices(
+    @Query('keys', new ParseArrayPipe({ items: String, separator: ',' }))
+    keys: string[],
+    @Query('answers', new ParseArrayPipe({ items: String, separator: ',' }))
+    answers: string[],
+  ): Promise<QuestionDto> {
+    const nextQuestion = await this.questionService.getNextQuestion(keys);
+    return nextQuestion;
   }
 }

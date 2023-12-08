@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { app, database } from 'firebase-admin';
+import { QuestionDto } from '../../question.dto';
 
 @Injectable()
 export class QuestionsRepository {
@@ -14,8 +15,21 @@ export class QuestionsRepository {
     this.ref = this.db.ref('services_backend/questions');
   }
 
-  async getNextQuestion() {
-    const a = await this.ref.get();
-    console.log(a.numChildren());
+  async getNextQuestion(answeredKeys?: string[]): Promise<QuestionDto> {
+    const questions = (await this.ref.get()).val();
+    for (const key in questions) {
+      if (!answeredKeys?.includes(key)) {
+        console.log(questions[key]);
+        return {
+          nextQuestion: {
+            key,
+            title: questions[key].title[0],
+            options: Object.values(questions[key].answers),
+          },
+        };
+      }
+    }
+
+    return null;
   }
 }
