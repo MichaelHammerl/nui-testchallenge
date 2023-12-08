@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
-import { QuestionsRepository } from './repositories/questions.repository';
+import { QuestionRepository } from './repositories/question.repository';
 
 const firebaseProvider = {
   provide: 'FIREBASE_APP',
@@ -23,14 +23,14 @@ const firebaseProvider = {
 
     return admin.initializeApp({
       credential: admin.credential.cert(firebaseConfig),
-      databaseURL: `https://nui-testchallenge-default-rtdb.europe-west1.firebasedatabase.app`,
+      databaseURL: configService.get<string>('DATABASE_URL'),
     });
   },
 };
 
 @Module({
   imports: [ConfigModule],
-  providers: [firebaseProvider, QuestionsRepository],
-  exports: [QuestionsRepository],
+  providers: [firebaseProvider, QuestionRepository],
+  exports: [QuestionRepository],
 })
 export class FirebaseModule {}

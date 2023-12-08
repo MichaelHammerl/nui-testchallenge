@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { QuestionsRepository } from './infrastructure/repositories/questions.repository';
+import { QuestionRepository } from './infrastructure/repositories/question.repository';
 import { QuestionDto } from './question.dto';
 
 @Injectable()
 export class QuestionService {
-  constructor(private questionRepository: QuestionsRepository) {}
+  constructor(private questionRepository: QuestionRepository) {}
 
   async getAvailableServices(
     answers: Record<string, string>,
   ): Promise<string[]> {
-    return this.questionRepository.getServices(answers);
+    return this.questionRepository.getAvailableServiceTitles(answers);
   }
 
   async getNextQuestion(answers: Record<string, string>): Promise<QuestionDto> {
