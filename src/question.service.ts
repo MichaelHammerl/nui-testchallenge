@@ -6,9 +6,13 @@ import { QuestionDto } from './question.dto';
 export class QuestionService {
   constructor(private questionRepository: QuestionsRepository) {}
 
-  async getNextQuestion(answeredKeys?: string[]): Promise<QuestionDto> {
-    const nextQuestion = this.questionRepository.getNextQuestion(answeredKeys);
+  async getAvailableServices(
+    answers: Record<string, string>,
+  ): Promise<string[]> {
+    return this.questionRepository.getServices(answers);
+  }
 
-    return nextQuestion;
+  async getNextQuestion(answers: Record<string, string>): Promise<QuestionDto> {
+    return this.questionRepository.getNextQuestion(answers);
   }
 }
